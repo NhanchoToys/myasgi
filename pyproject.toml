@@ -1,0 +1,4 @@
+[tool.basedpyright]
+typeCheckingMode = "recommended"
+reportAny = false
+reportExplicitAny = false
