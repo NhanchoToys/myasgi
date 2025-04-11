@@ -6,6 +6,7 @@ from app.types_ import AnyScope, AsyncCallable, Receive, Send
 
 
 class Component[S: AnyScope, R: Any](metaclass=ABCMeta):
+    @abstractmethod
     def __init__(self, *args: Any, **kwds: Any) -> None:
         pass
 
@@ -22,6 +23,7 @@ class Component[S: AnyScope, R: Any](metaclass=ABCMeta):
 class RouteComponent[S: AnyScope, Recv_T: Any, Route_T: MutableMapping[str, Any], Route_R: Any](Component[S, Recv_T], metaclass=ABCMeta):
     routes: Route_T
 
+    @abstractmethod
     def __init__(self, *args: Any, **kwds: Any) -> None:
         super().__init__(*args, **kwds)
 
@@ -30,6 +32,7 @@ class RouteComponent[S: AnyScope, Recv_T: Any, Route_T: MutableMapping[str, Any]
         """Route dispatcher"""
         raise NotImplementedError
 
-    def route_install(self, type_: str, route: str, target: AsyncCallable[..., Route_R]) -> None:
+    @abstractmethod
+    def route_install(self, route: str, target: AsyncCallable[..., Route_R], *, type_: str | None = None) -> None:
         """Install route target for specific type and route."""
-        self.routes.setdefault(type_, {})[route] = target
+        raise NotImplementedError

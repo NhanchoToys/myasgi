@@ -56,6 +56,13 @@ class HTTPComponent(
             if scope["path"] == k:  # temporary impl.
                 return await callee()
 
+    @override
+    def route_install(self, route: str, target: AsyncCallable[..., Response], *, type_: str | None = None) -> None:
+        """Install route target for specific type and route."""
+        if type_ is None:
+            raise ValueError("Route type `type_` is unset.")
+        self.routes.setdefault(type_, {})[route] = target
+
     def route[T: AsyncCallable[..., Response]](
         self,
         route: str,
@@ -67,13 +74,13 @@ class HTTPComponent(
     ) -> PassthroughDecorator[T]:
         def __wrap_route(fn: T) -> T:
             if get:
-                self.route_install("GET", route, fn)
+                self.route_install(route, fn, type_="GET")
             if post:
-                self.route_install("POST", route, fn)
+                self.route_install(route, fn, type_="POST")
             if put:
-                self.route_install("PUT", route, fn)
+                self.route_install(route, fn, type_="PUT")
             if delete:
-                self.route_install("DELETE", route, fn)
+                self.route_install(route, fn, type_="DELETE")
             return fn
 
         return __wrap_route
