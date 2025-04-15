@@ -71,6 +71,7 @@ class HTTPComponent(
         post: bool = False,
         put: bool = False,
         delete: bool = False,
+        head: bool = False,
     ) -> PassthroughDecorator[T]:
         def __wrap_route(fn: T) -> T:
             if get:
@@ -81,6 +82,8 @@ class HTTPComponent(
                 self.route_install(route, fn, type_="PUT")
             if delete:
                 self.route_install(route, fn, type_="DELETE")
+            if head:
+                self.route_install(route, fn, type_="HEAD")
             return fn
 
         return __wrap_route
